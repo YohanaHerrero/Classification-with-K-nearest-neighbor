@@ -55,3 +55,27 @@ print("Train set Accuracy: ", metrics.accuracy_score(y_train, neigh.predict(X_tr
 print("Test set Accuracy: ", metrics.accuracy_score(y_test, y_predicted))
 
 #the best turns out to be k=3
+
+#what about any other value of k?
+Ks = 10
+mean_acc = np.array([])
+std_acc = np.array([])
+
+for n in range(1,Ks): 
+    neigh = KNeighborsClassifier(n_neighbors = n).fit(X_train,y_train)
+    y_predicted=neigh.predict(X_test)
+    #fill the arrays
+    mean_acc = np.append(mean_acc, metrics.accuracy_score(y_test, y_predicted))
+    std_acc=np.append(std_acc, np.std(y_predicted==y_test)/np.sqrt(y_predicted.shape[0]))
+
+#plot the accuracy values for different k
+plt.plot(range(1,Ks),mean_acc,'g',label='Accuracy')
+plt.fill_between(range(1,Ks), mean_acc - 1 * std_acc, mean_acc + 1 * std_acc, alpha=0.1, label='+/- 3std')
+plt.fill_between(range(1,Ks), mean_acc - 3 * std_acc, mean_acc + 3 * std_acc, alpha=0.1, color="green", label='+/- 3std')
+plt.legend()
+plt.ylabel('Accuracy ')
+plt.xlabel('Number of Neighbors (K)')
+plt.tight_layout()
+plt.show()
+
+print( "The best accuracy was with", mean_acc.max(), "with k=", mean_acc.argmax()+1) 
